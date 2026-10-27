@@ -106,7 +106,7 @@
 
 \begin{document}
 
-\title[Article Title]{Using Peridynamics to Model Hydrogen Embrittlement in Stainless Steel}
+\title[Article Title]{Using Peridynamics to Model Hydrogen Embrittlement in Steel Pipes}
 
 %%=============================================================%%
 %% GivenName	-> \fnm{Joergen W.}
@@ -124,10 +124,11 @@
            \orgname{The University of Texas at Austin},
            \orgaddress{\city{Austin}, \postcode{78712}, \state{TX}, \country{USA}}}
 
-\abstract{Abstract}
+\abstract{%
+Hydrogen embrittlement (HE) causes steel pipes to fracture at lower strains and with less warning than unexposed steel, yet experimental data on HE are limited and fracture models often require the crack path to be specified in advance. We pose the matching of experimental tensile stress--strain curves as an inverse problem for a state-based peridynamic correspondence model with Voce hardening and Brozzo ductile damage, and use it to learn material properties of TBF1200 steel at three hydrogen concentrations. The parameters are calibrated with Dakota in two stages, hardening first and damage second. The calibrated model reproduces the experimental fracture strains to within 0.5 percentage points. Embrittlement is captured almost entirely by a single parameter, ThresholdDamage, which falls from 0.85 to 0.19 as hydrogen concentration increases, while the damage-rate parameters are unchanged. We then apply the calibrated parameters, unmodified, to a pipe fragmenting under internal pressure, with no prescribed fracture path. As hydrogen concentration increases, failure begins earlier and at lower plastic strain, with the mean plastic strain at failure decreasing from 0.214 to 0.141, and the pipe absorbs less energy through plastic deformation before it fragments. These results show that peridynamic inverse calibration can extend limited tensile data to predict how hydrogen affects the failure of a pipe.}
 
 
-\keywords{Keywords}
+\keywords{Peridynamics, Hydrogen embrittlement, Steel pipes, Fracture, Calibration}
 
 %%\pacs[JEL Classification]{D8, H51}
 
@@ -136,31 +137,326 @@
 \maketitle
 
 \section{Introduction}\label{sec1}
-%%%%%%%%%% Figure
-\begin{figure}[!b]
-\centering
-\includegraphics[width=\linewidth]{figs_HE/HE_0_frame_1150.jpg}
-\caption{Optimized nodal thickness distributions for the 1D bar obtained by minimizing strain energy density (green) and the $L^1$ norm of damage (red). The damage-optimized profile achieves fracture suppression with substantially less added material than the strain energy density-optimized profile.}
-\label{fig:optThickDamageStrainEnergyDenOverlayed}
-\end{figure}
 
-\section{Methods - The Peridynamic Formulation}\label{sec2}
+Hydrogen embrittlement (HE) is the loss of ductility and toughness that occurs when hydrogen enters a metal. It is a concern for high-strength steels in service, and most often it is encountered in pipes and pressure vessels, so predicting how a pressurized steel pipe fails as its hydrogen content increases is of practical interest~\cite{chowdhury2025review}. At the microstructural level, hydrogen penetrating the steel creates voids; under load, these voids act as stress concentrations that nucleate cracks~\cite{robertson2015hydrogen}. At the structural scale, the consequence is a transition from stable, ductile deformation to early and abrupt fracture.
 
-\subsection{Methods - Subsection}
+Experimental data on steel with different hydrogen concentrations make this transition visible in the tensile response. In the tests of Nieto et al.~\cite{nieto2024thesis} on TBF1200 sheet steel, which we use here, the stress--strain curve of the uncharged steel softens visibly over several percent strain before fracture. As the hydrogen concentration increases, this softening disappears and the material stays near its peak stress until it fractures abruptly at a much lower strain. Capturing this change in behavior, rather than only the drop in fracture strain, is a stringent test of any model of HE. Experimental data of this kind are limited, however. Only a few hydrogen concentrations have been tested, and they cannot cover the range of conditions in which HE matters in practice, including the geometry and loading of a pipe.
+
+The harder question is how to use such limited, material-level data to predict HE in a pipe. Fracture models that represent cracks explicitly typically require the crack path to be specified, or a crack to be seeded, before the simulation begins. For a pressurized pipe this is a serious limitation, because the fracture pattern is itself the result we are after and it is not known in advance. Phase-field models avoid this requirement and have been applied to hydrogen-assisted cracking~\cite{martinezpaneda2018phasefield,navidtehrani2025generalised}, but they introduce an additional field that must be solved for alongside the displacement. Peridynamics~\cite{silling2000reformulation,silling2005meshfree,silling2007states} offers another alternative. It is a nonlocal reformulation of continuum mechanics in which each point interacts with its neighbors within a finite horizon through integral equations, rather than through spatial derivatives. Damage is represented by bond failure, so cracks can nucleate, branch, and coalesce without a prescribed path and without additional fields to track the crack. These properties make peridynamics well suited to fracture and fragmentation problems like the one considered here.
+
+Peridynamics has previously been applied to hydrogen embrittlement, primarily by modeling the diffusion of hydrogen through a material and the cracking that results from the embrittlement it causes~\cite{demeo2016stress,ran2022crack,chen2023peridynamic}. Our approach is a distinctly different kind of problem. We do not model the transport of hydrogen. Instead, we use experimental stress--strain data at known hydrogen concentrations as the starting point, pose it as an inverse problem for the material properties, and use the learned properties to model pipes directly from that experimental data.
+
+This limited data motivates the approach taken here. Rather than using the stress--strain curves only to describe the specimens that were tested, we use them as ground truth for an inverse problem within a peridynamic framework: we seek the parameters of a state-based peridynamic correspondence material model, which allows a standard local constitutive law (here, Voce hardening) to be used within peridynamics, together with the Brozzo ductile damage law \cite{behzadinasab2020revisiting}, that reproduce the measured tensile response of Nieto et al.~\cite{nieto2024thesis} at each hydrogen concentration. The inverse problem is solved with Dakota~\cite{dakota2025}. Learning the material properties in this way extends the reach of the limited HE data. The calibrated parameters describe the material, not a single test, so they can be used to simulate configurations that were not tested and to assess the performance of pipes that have been exposed to hydrogen. We demonstrate this by applying the calibrated parameters, unmodified, to a fragmenting pipe loaded by internal pressure, and examining how the onset of fracture, the plastic strain at failure, and the distribution of damage change with hydrogen concentration. The main contributions are:
+\begin{itemize}
+\item a two-stage calibration procedure that separates hardening from damage, and shows that the Brozzo damage rates transfer unchanged between hydrogen concentrations while ThresholdDamage alone tracks embrittlement;
+\item a demonstration that parameters learned from a limited set of tensile tests can be used, without recalibration, to simulate a fragmenting pipe in which the fracture path is not prescribed; and
+\item a quantitative comparison of how pipe failure changes with hydrogen concentration, in terms of failure time, plastic strain at failure, and accumulated damage.
+\end{itemize}
+
+The remainder of the paper is organized as follows. Section~\ref{sec2} describes the peridynamic model, the hydrogen concentration cases, the calibration procedure, and the pipe simulation. Section~\ref{sec5} presents the calibration results and the pipe simulations, Section~\ref{sec6} discusses limitations, and Section~\ref{sec7} concludes.
+
+\section{Methods}\label{sec2}
+
+Material parameters governing hardening and ductile damage were calibrated against experimental
+engineering stress--strain curves from slow-rate dogbone tensile tests at several hydrogen
+concentrations, using peridynamic simulations of the tensile test posed as an inverse problem and
+solved with Dakota. The calibrated parameters for each concentration were then used, unmodified, to
+simulate a pressurized cylinder and study how the resulting damage and fragmentation behavior
+changes with embrittlement level.
+
+\subsection{Peridynamic formulation}\label{subsec2a}
+
+Simulations were performed in Peridigm~\cite{peridigm} using a state-based peridynamic~\cite{silling2007states} hypoelastic correspondence
+material model with isotropic hardening, in which the local deformation gradient is reconstructed
+from the relative motion of points within a finite horizon and used to evaluate a standard
+(local-form) constitutive response. Hardening followed a Voce-type saturation law,
+\begin{equation}
+  \sigma_y(\varepsilon_p) = \sigma_0 + (\sigma_{\mathrm{sat}} - \sigma_0)\left(1 - e^{-n\varepsilon_p}\right) + H\varepsilon_p,
+\end{equation}
+where $\varepsilon_p$ is the equivalent plastic strain and $\sigma_0$ (Initial Yield Stress),
+$\sigma_{\mathrm{sat}}$ (Saturated Yield Stress), $n$ (Exponential Constant) and $H$ (Linear
+Constant) are calibrated. $H$ is a plastic hardening modulus, active only after yield, and is
+distinct from the material's elastic moduli (bulk modulus 130~GPa, shear modulus 78~GPa), which were
+fixed at values representative of the base TBF1200 steel and not calibrated.  The corresponding
+Young's modulus, $E = 9KG/(3K+G) \approx 195$~GPa, agrees with the measured value of 201~GPa
+reported for this steel~\cite{nieto2024thesis} to within 3\%. The Voce law was adopted in
+preference to a power-law hardening rule because it reproduced the sharp yield knee seen in the
+experimental data.  A power-law's initial hardening modulus is bounded and could not match this sharp knee
+feature regardless of tuning.
+
+Ductile damage was modeled with the Brozzo/Wellman damage law of Behzadinasab and Foster~\cite{behzadinasab2020revisiting}, in which
+bond-level damage accumulates at a rate
+\begin{equation}
+  \dot D = d_1 \left\langle \frac{2\sigma_T}{3(\sigma_T - \sigma_M)} \right\rangle^{d_2} \dot{\bar\varepsilon}_p,
+\end{equation}
+driven by the bond-level maximum principal stress $\sigma_T$ and hydrostatic stress $\sigma_M$, and
+Heaviside-gated to tension ($\langle\cdot\rangle$) so that damage accumulates only under tensile
+triaxiality. Once a bond's accumulated damage $D$ exceeds ThresholdDamage, its contribution to force
+degrades linearly with further damage accumulation, reaching zero (full bond failure) at $D=1$.  Because
+of this, a bond's strength is reduced as damage accumulates.  Below
+ThresholdDamage a bond retains its full strength. Point-level damage, reported in the Results, is the
+neighborhood-volume-weighted average of this bond-level quantity over a point's horizon. The horizon
+used for the dogbone specimen was 0.236~cm for neighbor search, with an actual horizon of 0.189~cm
+used internally by the correspondence material's gradient/shape-tensor calculation, set empirically
+rather than from a fixed rule.
+
+\subsection{Hydrogen concentration cases}\label{subsec2b}
+
+The tensile stress-strain data used to calibrate the model, for all three hydrogen concentrations,
+were taken from the experimental work of Nieto et al.~\cite{nieto2024thesis}, who charged TBF1200
+sheet steel specimens with hydrogen and measured the resulting tensile response. Three cases were
+studied, denoted HE$_{0}$, HE$_{30}$, and HE$_{60}$, where the subscript is the duration,
+in minutes, of electrolytic hydrogen charging (condition A30) applied to the TBF1200 sheet steel
+specimen before testing (HE$_{0}$ being an uncharged baseline). Measured bulk hydrogen concentration
+increases monotonically with charging time: 0, 0.68 and 1.16~mppm for HE$_{0}$, HE$_{30}$, and
+HE$_{60}$ respectively~\cite{nieto2024thesis}.
+% TODO: provide the experimental protocol for the tensile tests themselves
+% (specimen geometry, strain rate, lab/source) if not already covered by the
+% Nieto et al. citation above -- not something I have grounded information
+% on from the computational calibration work.
+Experimental fracture strain decreases monotonically with increasing concentration (15.37\%,
+13.27\% and 7.68\% for HE$_{0}$, HE$_{30}$, and HE$_{60}$ respectively), and the
+character of the pre-fracture curve changes along with it: at low concentration the material
+softens visibly over several percent strain before fracturing, while at high concentration the
+material remains near peak stress until a comparatively abrupt final failure.
+
+\subsection{Calibration against tensile data}\label{subsec2c}
+
+The dogbone specimen was modeled with a prescribed-displacement boundary condition at each grip,
+scaled by each node's own distance from the specimen center so that grip motion is affine rather
+than rigid: each grip node's $y$-displacement was prescribed as $u_y = y \cdot \dot{e} \cdot t$, with
+elongation-rate constant $\dot{e} = 45.0~\mathrm{s}^{-1}$, common to all concentrations, run to a
+final time of 1.84~ms. At the grip node sets (located at $y \in [4.70, 5.08]$~cm and $y \in
+[-5.08, -4.70]$~cm), this gives nominal grip velocities of roughly 211--229~cm/s. The reported
+engineering stress and strain were not read directly from this boundary displacement, but from two
+tracked points at $y = \pm 1.238$~cm (gauge length 2.476~cm): strain is their relative displacement
+divided by the gauge length, and stress is the grip reaction force divided by the original gauge
+cross-section ($0.635 \times 0.315~\mathrm{cm}^2 = 0.200~\mathrm{cm}^2$), so that the localized
+necking within the gauge section is reflected rather than averaged out over the whole specimen. A
+finite horizon (as above) was used throughout. Simulations were explicit-dynamics, integrated with
+Peridigm's Verlet time-stepper, and solved in parallel across four MPI ranks.
+
+Calibration was driven by Dakota~\cite{dakota2025}, an open-source toolkit developed at Sandia
+National Laboratories that couples an external simulation code to a library of optimization,
+parameter-estimation, uncertainty-quantification and sensitivity-analysis methods. Dakota treats the
+simulation as a black box: it proposes a set of parameter values, writes them to an input file,
+launches the forward simulation (here, the Peridigm dogbone model), reads back the resulting response,
+and uses it to propose the next set of parameters. In this way Dakota acts as the driver of the
+optimization loop, while Peridigm supplies the forward solve at each iteration. Specifically, we used
+Dakota's \texttt{coliny\_pattern\_search} algorithm, a local, derivative-free direct search. The objective function was defined as the mean relative error between simulated and experimental stress.
+Simulated stress--strain curves were interpolated onto the experimental strain grids at each experimental strain value to evaluate the mean relative error.  Prior to the comparison, smoothing was applied to the simulated curve to reduce noise resulting from the dynamic loading nature of the simulation. Experimental points below 1\% of the curve's peak stress were
+excluded, since near-zero-stress sensor noise would otherwise make the relative error unstable. Where damage was active, a
+fracture-strain term (the relative error between simulated and experimental fracture strain) was
+added to the stress term, and the stress comparison was restricted to strains at or below the
+simulated fracture strain, since the two halves of a fractured specimen no longer produce physically
+meaningful stress readings. Convergence at each stage was assessed by confirming that perturbing
+each active parameter away from the current best point, in multiple directions, consistently failed
+to further reduce the objective.  The resulting fit was also inspected qualitatively against the
+experimental curve before advancing to the next stage.
+
+Calibration was performed in two stages. In Stage~1, only the hardening parameters
+($\sigma_0$, $\sigma_{\mathrm{sat}}$, $n$, $H$) were treated as free. Damage was fixed so that it never triggered, using a high ThresholdDamage and a damage-rate constant well above any plastic strain reached in this stage. The fit therefore reflected hardening alone. The fracture-strain
+term was also dropped from the objective at this stage.
+
+For every concentration after HE$_{0}$, Stage~1 was warm-started from the nearest calibrated
+concentration. We expected hardening to transfer well across embrittlement level, and this was
+confirmed for all three concentrations. Initial Yield Stress was the only Stage~1 parameter that moved
+meaningfully across concentrations. Saturated Yield Stress, the Exponential Constant and the Linear
+Constant were essentially unchanged.
 
 
+In Stage~2, the hardening parameters were frozen at their Stage~1 values and only the Brozzo damage
+parameters ($d_1$, $d_2$, ThresholdDamage) were calibrated, via a sweep of ThresholdDamage with $d_1$
+and $d_2$ fixed at values transferred from the previously calibrated concentration. This reflects a
+finding that held across every concentration calibrated: $d_1$ and $d_2$ transfer essentially
+unchanged with embrittlement level, while ThresholdDamage is the parameter that actually tracks it.
+For HE$_{30}$, a subsequent joint search over $d_1$, $d_2$ and ThresholdDamage together (hardening
+still frozen) converged to a modest further improvement over the ThresholdDamage-only sweep, and the
+reported HE$_{30}$ parameters reflect that joint result.  For HE$_{0}$, a joint search over $d_1$ and
+$d_2$ only (ThresholdDamage held fixed) was performed.  For HE$_{60}$, the reported
+parameters come from the ThresholdDamage-only sweep, as a joint damage-parameter search for that
+case did not reach a converged result within the scope of this work. Hardening and damage parameters
+were never jointly re-optimized together for any concentration. This procedure was used to calibrate
+material parameters for HE$_{0}$, HE$_{30}$ and HE$_{60}$.
+
+\subsection{Fragmenting pipe}\label{subsec2d}
+
+% TODO: the cylinder mesh/loading details below are drawn from prior notes
+% and have not been independently verified against the current source files
+% in this session -- please confirm before relying on them.
+The pressurized cylinder was discretized with four points through the wall thickness and a 10\%
+random perturbation of node positions to break mesh symmetry and let fracture localize naturally,
+with a horizon of 4.17~mm. The same random seed was used for all three hydrogen concentrations, so the perturbed point positions are identical across cases.
+% TODO: add mesh-refinement/horizon convergence results here once available --
+% we have (or plan to generate) results sweeping mesh resolution and horizon
+% for the fragmenting cylinder that justify this mesh/horizon choice; not
+% written up yet, add when ready.
+The cylinder was loaded with an internal pressure, applied as a radially directed body force on the
+inner surface node layer and ramped linearly from 0 to 500~MPa over the simulation's 400~$\mu$s
+duration, together with a matching body force on the end-cap node sets representing the axial stress
+a closed-end pressure vessel develops under that same internal pressure. Each concentration's
+calibrated hardening and damage parameters (Table~\ref{tab:calibration_stages}) were applied
+unmodified; no parameters were recalibrated against the cylinder geometry. Fragments were identified
+from the resulting bond connectivity at the end of the simulation.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Results}\label{sec5}
-\subsection{Results - Subsection 1}\label{subsec5a}
 
-\subsection{Limitations}
-Limitations
+\subsection{Dogbone calibration}\label{subsec5a}
+Calibrated parameters for the three hydrogen concentrations are listed in Table~\ref{tab:calibration_stages}, and the resulting simulated stress--strain curves are compared with the experimental data in Fig.~\ref{fig:stress_strain_fit}. In Stage~1, hardening was nearly independent of hydrogen concentration. Only the initial yield stress changed: for HE$_{30}$ it was 1,027~MPa, about 5\% higher than the 977~MPa found for HE$_{0}$ and HE$_{60}$. In Stage~2, embrittlement was captured almost entirely by ThresholdDamage, with $d_1$ and $d_2$ unchanged. ThresholdDamage falls by 40\% from HE$_{0}$ to HE$_{30}$ (0.85 to 0.51) and is 0.19 for HE$_{60}$, less than a quarter of the HE$_{0}$ value. This reduction causes the HE$_{60}$ specimen to fracture at about half the strain of HE$_{0}$ (7.80\% vs.\ 15.87\%). Figure~\ref{fig:fracture_strain_trend} shows that the simulated fracture strain decreases with hydrogen concentration and agrees with experiment to within 0.5 percentage points for all three cases, which demonstrates the embrittlement captured by the model. These parameters were then applied, unmodified, to the pressurized cylinder.
+\begin{figure}[h]
+\centering
+\includegraphics[width=\textwidth]{figs_HE/stress_strain_fit.pdf}
+\caption{Experimental (markers) and calibrated simulated (line) engineering stress--strain curves for HE$_{0}$, HE$_{30}$ and HE$_{60}$ at the final calibrated parameters (Table~\ref{tab:calibration_stages}). The simulated curves are smoothed with a Savitzky--Golay filter to remove loading noise up to 10\% strain; from 10\% strain to the simulated fracture strain the unfiltered curves are shown. All panels share the same strain axis.}
+\label{fig:stress_strain_fit}
+\end{figure}
+
+\begin{table}[h]
+\centering
+\caption{Calibrated material parameters for the three hydrogen concentrations. Stage~1 fits the Voce hardening law (yield and plastic flow) to the tensile curve with damage disabled; Stage~2 then calibrates the Brozzo damage model (post-yield, through fracture) with the Stage~1 hardening parameters frozen. Density (7800~kg/m$^3$), bulk modulus (130~GPa) and shear modulus (78~GPa) are identical for all three cases and were not calibrated.}
+\label{tab:calibration_stages}
+\begin{tabular*}{\textwidth}{@{}l@{\extracolsep{\fill}}ccc@{}}
+\toprule
+ & HE$_{0}$ & HE$_{30}$ & HE$_{60}$ \\
+\midrule
+\multicolumn{4}{@{}l}{\textit{Stage 1: hardening (Voce), damage disabled}}\\
+Initial yield stress (MPa)   & 977  & 1027 & 977  \\
+Saturated yield stress (MPa) & 1350 & 1350 & 1350 \\
+Exponential constant         & 22.0 & 22.0 & 22.0 \\
+Linear constant (MPa)        & 200  & 200  & 200  \\
+\midrule
+\multicolumn{4}{@{}l}{\textit{Stage 2: damage (Brozzo), hardening frozen}}\\
+$d_1$                        & 3.5  & 3.5  & 3.5  \\
+$d_2$                        & 0.99 & 0.99 & 0.99 \\
+ThresholdDamage              & 0.85 & 0.51 & 0.19 \\
+\botrule
+\end{tabular*}
+\end{table}
+
+
+\begin{figure}[h]
+\centering
+\begin{minipage}[c]{0.60\textwidth}
+\centering
+\includegraphics[width=\textwidth]{figs_HE/fracture_strain_trend.pdf}
+\end{minipage}\hfill
+\begin{minipage}[c]{0.37\textwidth}
+\centering
+\begin{tabular}{@{}lcc@{}}
+\toprule
+\multicolumn{3}{c}{Fracture strain (\%)}\\
+\cmidrule{1-3}
+Case & Exp. & Sim.\\
+\midrule
+HE$_{0}$  & 15.37 & 15.87\\
+HE$_{30}$ & 13.27 & 13.23\\
+HE$_{60}$ & 7.68  & 7.80\\
+\botrule
+\end{tabular}
+\end{minipage}
+\caption{Fracture strain as a function of hydrogen concentration. In the plot (left), the simulated fracture strain from the calibrated model (squares and line) is compared with the experimental fracture strain (open circles) for HE$_{0}$, HE$_{30}$ and HE$_{60}$. The table (right) lists the same values. Fracture strain decreases with increasing hydrogen concentration in both the experiments and the simulations.}
+\label{fig:fracture_strain_trend}
+\end{figure}
+
+
+\subsection{Fragmenting pipe}\label{subsec5c}
+Figure~\ref{fig:cylinder_damage_HE} shows damage in the pressurized cylinders at three times for each hydrogen concentration. The fragmentation pattern is nearly identical across the three cylinders because the same heterogeneity, added to mimic the heterogeneous microstructure of metals, is imposed in each case. Without it, cracks would not nucleate naturally. The differences between concentrations therefore lie in when cracks initiate and in how much damage accumulates within the fragments.
+
+These snapshots are shown at later times (up to $386.7~\mu\mathrm{s}$) than the quantitative damage
+statistics in Figs.~\ref{fig:eqps_at_failure} and~\ref{fig:damage_classes} (capped at
+$331~\mu\mathrm{s}$), since observing the fragmentation process itself, rather than only the damage
+state leading up to it, requires times past initial wall breach. The applied pressure continues to
+ramp on its prescribed schedule even after the wall breaches, with no venting or depressurization
+coupling, so the loading magnitude at these later times likely runs higher than a real depressurizing
+pipe would experience.  This does not affect the qualitative crack-initiation-timing comparison
+between concentrations shown here, which is established by material behavior before breach, but is
+why quantitative statistics elsewhere are only reported up to $331~\mu\mathrm{s}$.
+
+At the earliest time shown ($t=380.8~\mu\mathrm{s}$, top row), only the HE$_{60}$ cylinder contains points with damage above 0.5 (warm colors), and these are spread along its length. Cracks initiate at these locations, as seen in the growing gaps between fragments in the subsequent frames. In the HE$_{30}$ cylinder, fragmentation first appears at the second time ($t=384.7~\mu\mathrm{s}$), with gaps forming between fragments by the third. In the HE$_{0}$ cylinder, cracks are clearly visible only at the third time ($t=386.7~\mu\mathrm{s}$), and the gaps between fragments are much smaller than in the other two. The HE$_{0}$ steel can strain plastically and absorb energy, which delays fracture and fragmentation, whereas the embrittled HE$_{60}$ steel fractures at lower plastic strain and therefore fragments sooner.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{figure}[!b]
+\centering
+\setlength{\tabcolsep}{0pt}% no horizontal gap between images
+% overall size: \cw = width of one cylinder image; \rh = its height (crops are 510x700 px).
+% total row width = label + gap + 3\cw + legend (0.10) ~ 0.04 + 3\cw + 0.10 -> \cw = 0.285 fills the line
+\newlength{\cw}\setlength{\cw}{0.285\textwidth}
+\newlength{\rh}\setlength{\rh}{\dimexpr\cw*700/510\relax}
+% grid of cylinders (rows = frames, columns = concentration), saved in a box so the
+% legend can be made exactly as tall as the grid
+\sbox0{%
+% @{\hspace{...}} sets the white space between the time labels and the first column of cylinders
+\begin{tabular}{c@{\hspace{0.015\textwidth}}c c c}
+    & HE$_{0}$ & HE$_{30}$ & HE$_{60}$ \\[-0.25em]
+    % each cylinder crop is 510x700 px -> height = \cw * 700/510 = \rh
+    \rotatebox{90}{\makebox[\rh]{$t=380.8~\mathrm{\mu s}$}} &
+    \includegraphics[width=\cw]{figs_HE/HE_0_cropped_1130.png} &
+    \includegraphics[width=\cw]{figs_HE/HE_30_cropped_1130.png} &
+    \includegraphics[width=\cw]{figs_HE/HE_60_cropped_1130.png} \\[-0.36em]
+    \rotatebox{90}{\makebox[\rh]{$t=384.7~\mathrm{\mu s}$}} &
+    \includegraphics[width=\cw]{figs_HE/HE_0_cropped_1140.png} &
+    \includegraphics[width=\cw]{figs_HE/HE_30_cropped_1140.png} &
+    \includegraphics[width=\cw]{figs_HE/HE_60_cropped_1140.png} \\[-0.36em]
+    \rotatebox{90}{\makebox[\rh]{$t=386.7~\mathrm{\mu s}$}} &
+    \includegraphics[width=\cw]{figs_HE/HE_0_cropped_1150_triad.png} &
+    \includegraphics[width=\cw]{figs_HE/HE_30_cropped_1150.png} &
+    \includegraphics[width=\cw]{figs_HE/HE_60_cropped_1150.png}
+\end{tabular}}%
+\usebox0%
+% legend: colorbar drawn in LaTeX (gradient image + tick labels in the document font),
+% vertically centred on the middle row of the grid.
+% \vspace*{1.2em} skips the HE\_0/HE\_30/HE\_60 header row; the two \vfill's centre the colorbar
+% in the space that remains (the three image rows)
+\raisebox{\dimexpr-\dp0+0.3\baselineskip\relax}{\parbox[b][\dimexpr\ht0+\dp0\relax][t]{0.10\textwidth}{%
+    \vspace*{1.2em}\vfill
+    \setlength{\unitlength}{\textwidth}%
+    \begin{picture}(0.10,0.33)(0,0)
+      \put(0.015,0.005){\includegraphics[width=0.02\textwidth,height=0.32\textwidth]{figs_HE/damage_gradient.png}}
+      % ticks and labels: value v sits at height 0.005 + 0.32 v
+      \put(0.035,0.005){\line(1,0){0.005}}\put(0.044,0.005){\makebox(0,0)[l]{\footnotesize 0.0}}
+      \put(0.035,0.069){\line(1,0){0.005}}\put(0.044,0.069){\makebox(0,0)[l]{\footnotesize 0.2}}
+      \put(0.035,0.133){\line(1,0){0.005}}\put(0.044,0.133){\makebox(0,0)[l]{\footnotesize 0.4}}
+      \put(0.035,0.197){\line(1,0){0.005}}\put(0.044,0.197){\makebox(0,0)[l]{\footnotesize 0.6}}
+      \put(0.035,0.261){\line(1,0){0.005}}\put(0.044,0.261){\makebox(0,0)[l]{\footnotesize 0.8}}
+      \put(0.035,0.325){\line(1,0){0.005}}\put(0.044,0.325){\makebox(0,0)[l]{\footnotesize 1.0}}
+      \put(0.092,0.165){\rotatebox{90}{\makebox(0,0){\footnotesize Damage}}}
+    \end{picture}\vfill}}
+\caption{Damage in the fragmenting cylinder at $t=380.8$, $384.7$ and $386.7~\mathrm{\mu s}$ (top to bottom) for HE$_{0}$, HE$_{30}$ and HE$_{60}$ (left to right). Cracks open earlier in time as hydrogen concentration increases; the colorbar gives point damage.}
+\label{fig:cylinder_damage_HE}
+\end{figure}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+The damage within the fragments also differs between concentrations. Fragments of the HE$_{60}$ cylinder are mostly blue, indicating little accumulated damage, whereas fragments of the HE$_{0}$ cylinder are largely warm-colored. The hydrogen-free HE$_{0}$ steel strains plastically as it is loaded, which spreads the load over more points and raises their damage, but this plastic deformation also absorbs energy that would otherwise drive fracture. As a result, HE$_{0}$ contains many points with damage above 0.5 and yet fractures later than the embrittled cylinders.
+
+The plastic strain accumulated by each point at the moment it fails quantifies this trend. As shown by the cumulative distributions in Fig.~\ref{fig:eqps_at_failure}, points in the more heavily charged cylinders fail at progressively lower plastic strain.  This is reflected in the mean plastic strain at failure, which decreases from 0.214 for HE${0}$ to 0.176 for HE${30}$ and 0.141 for HE$_{60}$. Figure~\ref{fig:damage_classes} shows the distribution of point damage at failure. In HE$_{60}$, 49\% of points have a damage value of 0.49 or less, compared with none in HE$_{0}$. Together, these results show that as hydrogen concentration increases, the pipe's capacity to deform plastically and absorb energy decreases, so fracture initiates earlier in time and at lower plastic strain.
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.95\textwidth]{figs_HE/eqps_at_failure.pdf}
+\caption{Plastic strain at failure in the pressurized pipe for HE$_{0}$, HE$_{30}$ and HE$_{60}$. For each point that failed (more than half of its bonds broken), we record the plastic strain it had accumulated at that moment. Each curve shows the fraction of all points in the pipe that failed with plastic strain at or below the value on the horizontal axis. Failures are counted up to $331~\mu\mathrm{s}$, so the curves plateau at the fraction of points that had failed by then: 30\%, 35\% and 39\% of points for HE$_{0}$, HE$_{30}$ and HE$_{60}$, respectively. The median plastic strain at failure is 0.205 for HE$_{0}$, 0.170 for HE$_{30}$ and 0.137 for HE$_{60}$. Triangles on the horizontal axis, with dashed lines up to each curve, mark the mean plastic strain at failure of the points that had failed, which is 0.214, 0.176 and 0.141 for HE$_{0}$, HE$_{30}$ and HE$_{60}$, respectively.}
+\label{fig:eqps_at_failure}
+\end{figure}
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.95\textwidth]{figs_HE/damage_classes.pdf}
+\caption{Share of material points in each accumulated-damage class for the pressurized pipe with HE$_{0}$, HE$_{30}$ and HE$_{60}$ at $t=331~\mu\mathrm{s}$ (internal pressure $\approx 414$~MPa, from a linear ramp of 0 to 500~MPa over $400~\mu\mathrm{s}$). Each bar represents 100\% of the points in the cylinder, split into four damage classes whose colors follow the damage colorbar in Fig.~\ref{fig:cylinder_damage_HE}. Points with damage above 0.75 make up 64\%, 34\% and 21\% of the cylinder for HE$_{0}$, HE$_{30}$ and HE$_{60}$, respectively.}
+\label{fig:damage_classes}
+\end{figure}
+
+
+% \section{Limitations}\label{sec6}
+% TODO: HE\_120 calibration not yet refined; sensitivity of fragment patterns
+% to mesh jitter, horizon and loading perturbation; post-fracture
+% oscillation in the Brozzo model.
 
 \section{Conclusion}\label{sec7}
-Conclusions
+We used a state-based peridynamic correspondence model to learn the properties of TBF1200 steel at three hydrogen concentrations from experimental tensile curves, and then used those properties to simulate a pipe fragmenting under internal pressure. The calibrated model reproduced the experimental fracture strains to within 0.5 percentage points, and embrittlement was captured almost entirely by ThresholdDamage, which decreased from 0.85 to 0.51 to 0.19 while $d_1$ and $d_2$ did not change.  The results demonstrate that the model can effectively capture the effects of hydrogen on the mechanical behavior of the material. Applied unmodified to the pipe, with no prescribed crack path, the calibrated parameters produced earlier failure at lower plastic strain as hydrogen concentration increased, with the mean plastic strain at failure decreasing from 0.214 to 0.141. The inverse problem thus extends a small set of tensile tests to a configuration that was not tested.
 
 
+
+\begin{comment}
 \section{Supplementary information}\label{sec8}
 
 \bmhead{Acknowledgements}\label{sec9}
@@ -176,6 +472,7 @@ Conclusions
 \item \textbf{Code availability:} 
 \item \textbf{Author contributions:} 
 \end{itemize}
+\end{comment}
 
 %%===========================================================================================%%
 %% If you are submitting to one of the Nature Portfolio journals, using the eJP submission   %%
@@ -184,7 +481,7 @@ Conclusions
 %% file, and delete the associated \verb+\bibliography+ commands.                            %%
 %%===========================================================================================%%
 
-\bibliography{references_PD_paper}\label{sec11}
+\bibliography{references_HE_paper}\label{sec11}
 %% if required, the content of .bbl file can be included here once bbl is generated
 %%\input sn-article.bbl
 

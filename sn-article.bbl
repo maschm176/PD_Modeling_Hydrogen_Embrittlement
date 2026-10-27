@@ -1,0 +1,240 @@
+%% BioMed_Central_Bib_Style_v1.01
+
+\begin{thebibliography}{14}
+% BibTex style file: bmc-mathphys.bst (version 2.1), 2014-07-24
+\ifx \bisbn   \undefined \def \bisbn  #1{ISBN #1}\fi
+\ifx \binits  \undefined \def \binits#1{#1}\fi
+\ifx \bauthor  \undefined \def \bauthor#1{#1}\fi
+\ifx \batitle  \undefined \def \batitle#1{#1}\fi
+\ifx \bjtitle  \undefined \def \bjtitle#1{#1}\fi
+\ifx \bvolume  \undefined \def \bvolume#1{\textbf{#1}}\fi
+\ifx \byear  \undefined \def \byear#1{#1}\fi
+\ifx \bissue  \undefined \def \bissue#1{#1}\fi
+\ifx \bfpage  \undefined \def \bfpage#1{#1}\fi
+\ifx \blpage  \undefined \def \blpage #1{#1}\fi
+\ifx \burl  \undefined \def \burl#1{\textsf{#1}}\fi
+\ifx \doiurl  \undefined \def \doiurl#1{\url{https://doi.org/#1}}\fi
+\ifx \betal  \undefined \def \betal{\textit{et al.}}\fi
+\ifx \binstitute  \undefined \def \binstitute#1{#1}\fi
+\ifx \binstitutionaled  \undefined \def \binstitutionaled#1{#1}\fi
+\ifx \bctitle  \undefined \def \bctitle#1{#1}\fi
+\ifx \beditor  \undefined \def \beditor#1{#1}\fi
+\ifx \bpublisher  \undefined \def \bpublisher#1{#1}\fi
+\ifx \bbtitle  \undefined \def \bbtitle#1{#1}\fi
+\ifx \bedition  \undefined \def \bedition#1{#1}\fi
+\ifx \bseriesno  \undefined \def \bseriesno#1{#1}\fi
+\ifx \blocation  \undefined \def \blocation#1{#1}\fi
+\ifx \bsertitle  \undefined \def \bsertitle#1{#1}\fi
+\ifx \bsnm \undefined \def \bsnm#1{#1}\fi
+\ifx \bsuffix \undefined \def \bsuffix#1{#1}\fi
+\ifx \bparticle \undefined \def \bparticle#1{#1}\fi
+\ifx \barticle \undefined \def \barticle#1{#1}\fi
+\bibcommenthead
+\ifx \bconfdate \undefined \def \bconfdate #1{#1}\fi
+\ifx \botherref \undefined \def \botherref #1{#1}\fi
+\ifx \url \undefined \def \url#1{\textsf{#1}}\fi
+\ifx \bchapter \undefined \def \bchapter#1{#1}\fi
+\ifx \bbook \undefined \def \bbook#1{#1}\fi
+\ifx \bcomment \undefined \def \bcomment#1{#1}\fi
+\ifx \oauthor \undefined \def \oauthor#1{#1}\fi
+\ifx \citeauthoryear \undefined \def \citeauthoryear#1{#1}\fi
+\ifx \endbibitem  \undefined \def \endbibitem {}\fi
+\ifx \bconflocation  \undefined \def \bconflocation#1{#1}\fi
+\ifx \arxivurl  \undefined \def \arxivurl#1{\textsf{#1}}\fi
+\csname PreBibitemsHook\endcsname
+
+%%% 1
+\bibitem[\protect\citeauthoryear{Chowdhury et~al.}{2025}]{chowdhury2025review}
+\begin{barticle}
+\bauthor{\bsnm{Chowdhury}, \binits{M.F.}},
+\bauthor{\bsnm{Tapia-Bastidas}, \binits{C.V.}},
+\bauthor{\bsnm{Hoschke}, \binits{J.}},
+\bauthor{\bsnm{Venezuela}, \binits{J.}},
+\bauthor{\bsnm{Atrens}, \binits{A.}}:
+\batitle{A review of influence of hydrogen on fracture toughness and mechanical properties of gas transmission pipeline steels}.
+\bjtitle{International Journal of Hydrogen Energy}
+\bvolume{102},
+\bfpage{181}--\blpage{221}
+(\byear{2025})
+\end{barticle}
+\endbibitem
+
+%%% 2
+\bibitem[\protect\citeauthoryear{Robertson et~al.}{2015}]{robertson2015hydrogen}
+\begin{barticle}
+\bauthor{\bsnm{Robertson}, \binits{I.M.}},
+\bauthor{\bsnm{Sofronis}, \binits{P.}},
+\bauthor{\bsnm{Nagao}, \binits{A.}},
+\bauthor{\bsnm{Martin}, \binits{M.L.}},
+\bauthor{\bsnm{Wang}, \binits{S.}},
+\bauthor{\bsnm{Gross}, \binits{D.W.}},
+\bauthor{\bsnm{Nygren}, \binits{K.E.}}:
+\batitle{Hydrogen embrittlement understood}.
+\bjtitle{Metallurgical and Materials Transactions A}
+\bvolume{46},
+\bfpage{2323}--\blpage{2341}
+(\byear{2015})
+\doiurl{10.1007/s11661-015-2836-1}
+\end{barticle}
+\endbibitem
+
+%%% 3
+\bibitem[\protect\citeauthoryear{Nieto et~al.}{2024}]{nieto2024thesis}
+\begin{botherref}
+\oauthor{\bsnm{Nieto}, \binits{D.}},
+\oauthor{\bsnm{M{\"u}nstermann}, \binits{S.}},
+\oauthor{\bsnm{Seidenfu{\ss}}, \binits{M.}}:
+Modelling hydrogen embrittlement in steels.
+PhD thesis,
+Fachgruppe f{\"u}r Materialwissenschaft und Werkstofftechnik, RWTH Aachen University
+(2024)
+\end{botherref}
+\endbibitem
+
+%%% 4
+\bibitem[\protect\citeauthoryear{Mart{\'\i}nez-Pa{\~n}eda et~al.}{2018}]{martinezpaneda2018phasefield}
+\begin{barticle}
+\bauthor{\bsnm{Mart{\'\i}nez-Pa{\~n}eda}, \binits{E.}},
+\bauthor{\bsnm{Golahmar}, \binits{A.}},
+\bauthor{\bsnm{Niordson}, \binits{C.F.}}:
+\batitle{A phase field formulation for hydrogen assisted cracking}.
+\bjtitle{Computer Methods in Applied Mechanics and Engineering}
+\bvolume{342},
+\bfpage{742}--\blpage{761}
+(\byear{2018})
+\end{barticle}
+\endbibitem
+
+%%% 5
+\bibitem[\protect\citeauthoryear{Navidtehrani et~al.}{2025}]{navidtehrani2025generalised}
+\begin{barticle}
+\bauthor{\bsnm{Navidtehrani}, \binits{Y.}},
+\bauthor{\bsnm{Beteg{\'o}n}, \binits{C.}},
+\bauthor{\bsnm{Mart{\'\i}nez-Pa{\~n}eda}, \binits{E.}}:
+\batitle{A generalised framework for phase field-based modelling of coupled problems: application to thermo-mechanical fracture, hydraulic fracture, hydrogen embrittlement and corrosion}.
+\bjtitle{Engineering Fracture Mechanics}
+\bvolume{326},
+\bfpage{111363}
+(\byear{2025})
+\end{barticle}
+\endbibitem
+
+%%% 6
+\bibitem[\protect\citeauthoryear{Silling}{2000}]{silling2000reformulation}
+\begin{barticle}
+\bauthor{\bsnm{Silling}, \binits{S.A.}}:
+\batitle{Reformulation of elasticity theory for discontinuities and long-range forces}.
+\bjtitle{Journal of the Mechanics and Physics of Solids}
+\bvolume{48}(\bissue{1}),
+\bfpage{175}--\blpage{209}
+(\byear{2000})
+\doiurl{10.1016/S0022-5096(99)00029-0}
+\end{barticle}
+\endbibitem
+
+%%% 7
+\bibitem[\protect\citeauthoryear{Silling and Askari}{2005}]{silling2005meshfree}
+\begin{barticle}
+\bauthor{\bsnm{Silling}, \binits{S.A.}},
+\bauthor{\bsnm{Askari}, \binits{E.}}:
+\batitle{A meshfree method based on the peridynamic model of solid mechanics}.
+\bjtitle{Computers \& Structures}
+\bvolume{83}(\bissue{17}),
+\bfpage{1526}--\blpage{1535}
+(\byear{2005})
+\doiurl{10.1016/j.compstruc.2004.11.026}
+\end{barticle}
+\endbibitem
+
+%%% 8
+\bibitem[\protect\citeauthoryear{Silling et~al.}{2007}]{silling2007states}
+\begin{barticle}
+\bauthor{\bsnm{Silling}, \binits{S.A.}},
+\bauthor{\bsnm{Epton}, \binits{M.}},
+\bauthor{\bsnm{Weckner}, \binits{O.}},
+\bauthor{\bsnm{Xu}, \binits{J.}},
+\bauthor{\bsnm{Askari}, \binits{E.}}:
+\batitle{Peridynamic states and constitutive modeling}.
+\bjtitle{Journal of Elasticity}
+\bvolume{88}(\bissue{2}),
+\bfpage{151}--\blpage{184}
+(\byear{2007})
+\end{barticle}
+\endbibitem
+
+%%% 9
+\bibitem[\protect\citeauthoryear{De~Meo et~al.}{2016}]{demeo2016stress}
+\begin{barticle}
+\bauthor{\bsnm{De~Meo}, \binits{D.}},
+\bauthor{\bsnm{Diyaroglu}, \binits{C.}},
+\bauthor{\bsnm{Zhu}, \binits{N.}},
+\bauthor{\bsnm{Oterkus}, \binits{E.}},
+\bauthor{\bsnm{Siddiq}, \binits{M.A.}}:
+\batitle{Modelling of stress-corrosion cracking by using peridynamics}.
+\bjtitle{International Journal of Hydrogen Energy}
+\bvolume{41}(\bissue{15}),
+\bfpage{6593}--\blpage{6609}
+(\byear{2016})
+\end{barticle}
+\endbibitem
+
+%%% 10
+\bibitem[\protect\citeauthoryear{Ran et~al.}{2022}]{ran2022crack}
+\begin{barticle}
+\bauthor{\bsnm{Ran}, \binits{X.}},
+\bauthor{\bsnm{Qian}, \binits{S.}},
+\bauthor{\bsnm{Zhou}, \binits{J.}},
+\bauthor{\bsnm{Xu}, \binits{Z.}}:
+\batitle{Crack propagation analysis of hydrogen embrittlement based on peridynamics}.
+\bjtitle{International Journal of Hydrogen Energy}
+\bvolume{47}(\bissue{14}),
+\bfpage{9045}--\blpage{9057}
+(\byear{2022})
+\end{barticle}
+\endbibitem
+
+%%% 11
+\bibitem[\protect\citeauthoryear{Chen et~al.}{2023}]{chen2023peridynamic}
+\begin{barticle}
+\bauthor{\bsnm{Chen}, \binits{Z.}},
+\bauthor{\bsnm{Yang}, \binits{D.}},
+\bauthor{\bsnm{Bian}, \binits{H.}}:
+\batitle{Peridynamic modeling of crack propagation driven by hydrogen embrittlement}.
+\bjtitle{Engineering Fracture Mechanics}
+\bvolume{293},
+\bfpage{10968}
+(\byear{2023})
+\end{barticle}
+\endbibitem
+
+%%% 12
+\bibitem[\protect\citeauthoryear{Behzadinasab and Foster}{2020}]{behzadinasab2020revisiting}
+\begin{barticle}
+\bauthor{\bsnm{Behzadinasab}, \binits{M.}},
+\bauthor{\bsnm{Foster}, \binits{J.T.}}:
+\batitle{Revisiting the third {Sandia} {Fracture} {Challenge}: a bond-associated, semi-{Lagrangian} peridynamic approach to modeling large deformation and ductile fracture}.
+\bjtitle{International Journal of Fracture}
+\bvolume{224}(\bissue{2}),
+\bfpage{261}--\blpage{267}
+(\byear{2020})
+\end{barticle}
+\endbibitem
+
+%%% 13
+\bibitem[\protect\citeauthoryear{}{}]{dakota2025}
+\begin{botherref}
+Dakota: About Dakota, Version 6.20 Users Manual.
+\url{https://snl-dakota.github.io/docs/6.20.0/users/usingdakota/introduction/aboutdakota.html}
+\end{botherref}
+\endbibitem
+
+%%% 14
+\bibitem[\protect\citeauthoryear{}{}]{peridigm}
+\begin{botherref}
+Peridigm: Peridynamics Simulation Code.
+GitHub repository.
+\url{https://github.com/peridigm/peridigm}
+\end{botherref}
+\endbibitem
+
+\end{thebibliography}

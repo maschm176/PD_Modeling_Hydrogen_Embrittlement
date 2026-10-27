@@ -1,0 +1,9 @@
+.DS_Store
+# LaTeX intermediates (the compiled PDF and .bbl are tracked)
+*.aux
+*.log
+*.blg
+*.out
+*.fls
+*.fdb_latexmk
+*.synctex.gz
