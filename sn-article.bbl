@@ -1,6 +1,6 @@
 %% BioMed_Central_Bib_Style_v1.01
 
-\begin{thebibliography}{14}
+\begin{thebibliography}{16}
 % BibTex style file: bmc-mathphys.bst (version 2.1), 2014-07-24
 \ifx \bisbn   \undefined \def \bisbn  #1{ISBN #1}\fi
 \ifx \binits  \undefined \def \binits#1{#1}\fi
@@ -51,7 +51,8 @@
 \bauthor{\bsnm{Hoschke}, \binits{J.}},
 \bauthor{\bsnm{Venezuela}, \binits{J.}},
 \bauthor{\bsnm{Atrens}, \binits{A.}}:
-\batitle{A review of influence of hydrogen on fracture toughness and mechanical properties of gas transmission pipeline steels}.
+\batitle{A review of influence of hydrogen on fracture toughness and mechanical
+  properties of gas transmission pipeline steels}.
 \bjtitle{International Journal of Hydrogen Energy}
 \bvolume{102},
 \bfpage{181}--\blpage{221}
@@ -60,7 +61,8 @@
 \endbibitem
 
 %%% 2
-\bibitem[\protect\citeauthoryear{Robertson et~al.}{2015}]{robertson2015hydrogen}
+\bibitem[\protect\citeauthoryear{Robertson
+  et~al.}{2015}]{robertson2015hydrogen}
 \begin{barticle}
 \bauthor{\bsnm{Robertson}, \binits{I.M.}},
 \bauthor{\bsnm{Sofronis}, \binits{P.}},
@@ -86,13 +88,15 @@
 \oauthor{\bsnm{Seidenfu{\ss}}, \binits{M.}}:
 Modelling hydrogen embrittlement in steels.
 PhD thesis,
-Fachgruppe f{\"u}r Materialwissenschaft und Werkstofftechnik, RWTH Aachen University
+Fachgruppe f{\"u}r Materialwissenschaft und Werkstofftechnik, RWTH Aachen
+  University
 (2024)
 \end{botherref}
 \endbibitem
 
 %%% 4
-\bibitem[\protect\citeauthoryear{Mart{\'\i}nez-Pa{\~n}eda et~al.}{2018}]{martinezpaneda2018phasefield}
+\bibitem[\protect\citeauthoryear{Mart{\'\i}nez-Pa{\~n}eda
+  et~al.}{2018}]{martinezpaneda2018phasefield}
 \begin{barticle}
 \bauthor{\bsnm{Mart{\'\i}nez-Pa{\~n}eda}, \binits{E.}},
 \bauthor{\bsnm{Golahmar}, \binits{A.}},
@@ -106,12 +110,15 @@ Fachgruppe f{\"u}r Materialwissenschaft und Werkstofftechnik, RWTH Aachen Univer
 \endbibitem
 
 %%% 5
-\bibitem[\protect\citeauthoryear{Navidtehrani et~al.}{2025}]{navidtehrani2025generalised}
+\bibitem[\protect\citeauthoryear{Navidtehrani
+  et~al.}{2025}]{navidtehrani2025generalised}
 \begin{barticle}
 \bauthor{\bsnm{Navidtehrani}, \binits{Y.}},
 \bauthor{\bsnm{Beteg{\'o}n}, \binits{C.}},
 \bauthor{\bsnm{Mart{\'\i}nez-Pa{\~n}eda}, \binits{E.}}:
-\batitle{A generalised framework for phase field-based modelling of coupled problems: application to thermo-mechanical fracture, hydraulic fracture, hydrogen embrittlement and corrosion}.
+\batitle{A generalised framework for phase field-based modelling of coupled
+  problems: application to thermo-mechanical fracture, hydraulic fracture,
+  hydrogen embrittlement and corrosion}.
 \bjtitle{Engineering Fracture Mechanics}
 \bvolume{326},
 \bfpage{111363}
@@ -123,7 +130,8 @@ Fachgruppe f{\"u}r Materialwissenschaft und Werkstofftechnik, RWTH Aachen Univer
 \bibitem[\protect\citeauthoryear{Silling}{2000}]{silling2000reformulation}
 \begin{barticle}
 \bauthor{\bsnm{Silling}, \binits{S.A.}}:
-\batitle{Reformulation of elasticity theory for discontinuities and long-range forces}.
+\batitle{Reformulation of elasticity theory for discontinuities and long-range
+  forces}.
 \bjtitle{Journal of the Mechanics and Physics of Solids}
 \bvolume{48}(\bissue{1}),
 \bfpage{175}--\blpage{209}
@@ -133,7 +141,8 @@ Fachgruppe f{\"u}r Materialwissenschaft und Werkstofftechnik, RWTH Aachen Univer
 \endbibitem
 
 %%% 7
-\bibitem[\protect\citeauthoryear{Silling and Askari}{2005}]{silling2005meshfree}
+\bibitem[\protect\citeauthoryear{Silling and
+  Askari}{2005}]{silling2005meshfree}
 \begin{barticle}
 \bauthor{\bsnm{Silling}, \binits{S.A.}},
 \bauthor{\bsnm{Askari}, \binits{E.}}:
@@ -185,7 +194,8 @@ Fachgruppe f{\"u}r Materialwissenschaft und Werkstofftechnik, RWTH Aachen Univer
 \bauthor{\bsnm{Qian}, \binits{S.}},
 \bauthor{\bsnm{Zhou}, \binits{J.}},
 \bauthor{\bsnm{Xu}, \binits{Z.}}:
-\batitle{Crack propagation analysis of hydrogen embrittlement based on peridynamics}.
+\batitle{Crack propagation analysis of hydrogen embrittlement based on
+  peridynamics}.
 \bjtitle{International Journal of Hydrogen Energy}
 \bvolume{47}(\bissue{14}),
 \bfpage{9045}--\blpage{9057}
@@ -199,20 +209,24 @@ Fachgruppe f{\"u}r Materialwissenschaft und Werkstofftechnik, RWTH Aachen Univer
 \bauthor{\bsnm{Chen}, \binits{Z.}},
 \bauthor{\bsnm{Yang}, \binits{D.}},
 \bauthor{\bsnm{Bian}, \binits{H.}}:
-\batitle{Peridynamic modeling of crack propagation driven by hydrogen embrittlement}.
+\batitle{Peridynamic modeling of crack propagation driven by hydrogen
+  embrittlement}.
 \bjtitle{Engineering Fracture Mechanics}
 \bvolume{293},
-\bfpage{10968}
+\bfpage{109687}
 (\byear{2023})
 \end{barticle}
 \endbibitem
 
 %%% 12
-\bibitem[\protect\citeauthoryear{Behzadinasab and Foster}{2020}]{behzadinasab2020revisiting}
+\bibitem[\protect\citeauthoryear{Behzadinasab and
+  Foster}{2020}]{behzadinasab2020revisiting}
 \begin{barticle}
 \bauthor{\bsnm{Behzadinasab}, \binits{M.}},
 \bauthor{\bsnm{Foster}, \binits{J.T.}}:
-\batitle{Revisiting the third {Sandia} {Fracture} {Challenge}: a bond-associated, semi-{Lagrangian} peridynamic approach to modeling large deformation and ductile fracture}.
+\batitle{Revisiting the third {Sandia} {Fracture} {Challenge}: a
+  bond-associated, semi-{Lagrangian} peridynamic approach to modeling large
+  deformation and ductile fracture}.
 \bjtitle{International Journal of Fracture}
 \bvolume{224}(\bissue{2}),
 \bfpage{261}--\blpage{267}
@@ -229,12 +243,49 @@ Dakota: About Dakota, Version 6.20 Users Manual.
 \endbibitem
 
 %%% 14
-\bibitem[\protect\citeauthoryear{}{}]{peridigm}
-\begin{botherref}
-Peridigm: Peridynamics Simulation Code.
-GitHub repository.
-\url{https://github.com/peridigm/peridigm}
-\end{botherref}
+\bibitem[\protect\citeauthoryear{Littlewood et~al.}{2024}]{peridigm}
+\begin{barticle}
+\bauthor{\bsnm{Littlewood}, \binits{D.J.}},
+\bauthor{\bsnm{Parks}, \binits{M.L.}},
+\bauthor{\bsnm{Foster}, \binits{J.T.}},
+\bauthor{\bsnm{Mitchell}, \binits{J.A.}},
+\bauthor{\bsnm{Diehl}, \binits{P.}}:
+\batitle{The {Peridigm} meshfree peridynamics code}.
+\bjtitle{Journal of Peridynamics and Nonlocal Modeling}
+\bvolume{6},
+\bfpage{118}--\blpage{148}
+(\byear{2024})
+\doiurl{10.1007/s42102-023-00100-0}
+\end{barticle}
+\endbibitem
+
+%%% 15
+\bibitem[\protect\citeauthoryear{Behzadinasab and
+  Foster}{2020}]{behzadinasab2020semilagrangian}
+\begin{barticle}
+\bauthor{\bsnm{Behzadinasab}, \binits{M.}},
+\bauthor{\bsnm{Foster}, \binits{J.T.}}:
+\batitle{A semi-lagrangian constitutive correspondence framework for
+  peridynamics}.
+\bjtitle{Journal of the Mechanics and Physics of Solids}
+\bvolume{137},
+\bfpage{103862}
+(\byear{2020})
+\doiurl{10.1016/j.jmps.2019.103862}
+\end{barticle}
+\endbibitem
+
+%%% 16
+\bibitem[\protect\citeauthoryear{Voce}{1948}]{voce1948}
+\begin{barticle}
+\bauthor{\bsnm{Voce}, \binits{E.}}:
+\batitle{The relationship between stress and strain for homogeneous
+  deformation}.
+\bjtitle{Journal of the Institute of Metals}
+\bvolume{74},
+\bfpage{537}--\blpage{562}
+(\byear{1948})
+\end{barticle}
 \endbibitem
 
 \end{thebibliography}
